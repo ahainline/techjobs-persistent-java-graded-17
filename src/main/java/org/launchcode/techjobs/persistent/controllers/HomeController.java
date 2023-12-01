@@ -5,6 +5,7 @@ import org.launchcode.techjobs.persistent.models.Employer;
 import org.launchcode.techjobs.persistent.models.Job;
 import org.launchcode.techjobs.persistent.models.Skill;
 import org.launchcode.techjobs.persistent.models.data.EmployerRepository;
+import org.launchcode.techjobs.persistent.models.data.JobRepository;
 import org.launchcode.techjobs.persistent.models.data.SkillRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -26,6 +27,8 @@ public class HomeController {
     private EmployerRepository employerRepository;
     @Autowired
     private SkillRepository skillRepository;
+    @Autowired
+    private JobRepository jobRepository;
 
     @RequestMapping("/")
     public String index(Model model) {
@@ -47,10 +50,6 @@ public class HomeController {
     public String processAddJobForm(@ModelAttribute @Valid Job newJob,
                                        Errors errors, Model model, @RequestParam int employerId) {
 
-        if (errors.hasErrors()) {
-	    model.addAttribute("title", "Add Job");
-            return "add";
-        }
         Optional optEmployer = employerRepository.findById(employerId);
         if (optEmployer.isPresent()) {
             Employer employer = (Employer) optEmployer.get();
@@ -59,6 +58,13 @@ public class HomeController {
             return "redirect:../";
         }
 
+        if (errors.hasErrors()) {
+	    model.addAttribute("title", "Add Job");
+        model.addAttribute("employers", employerRepository.findAll());
+            return "add";
+        }
+
+        jobRepository.save(newJob);
         return "redirect:";
     }
 
