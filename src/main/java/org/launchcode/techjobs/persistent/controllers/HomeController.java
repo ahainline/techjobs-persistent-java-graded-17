@@ -54,14 +54,10 @@ public class HomeController {
         if (optEmployer.isPresent()) {
             Employer employer = (Employer) optEmployer.get();
             newJob.setEmployer(employer);
-        } else {
-            return "redirect:../";
         }
 
-        if (!skills.isEmpty()) {
-            List<Skill> skillObjs = (List<Skill>) skillRepository.findAllById(skills);
-            newJob.setSkills(skillObjs);
-        }
+        List<Skill> skillObjs = (List<Skill>) skillRepository.findAllById(skills);
+        newJob.setSkills(skillObjs);
 
         if (errors.hasErrors()) {
 	        model.addAttribute("title", "Add Job");
